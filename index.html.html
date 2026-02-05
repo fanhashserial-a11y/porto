@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GT Radial - Warehouse Flow Process</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1f3a 0%, #2d3561 100%);
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            background: rgba(26, 31, 58, 0.95);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        
+        .logo-g {
+            color: #ef4444;
+        }
+        
+        .logo-t {
+            color: #3b82f6;
+        }
+        
+        .logo-rest {
+            background: linear-gradient(135deg, #3b82f6 0%, #ef4444 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+        }
+
+        .nav-links a:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(rgba(26, 31, 58, 0.8), rgba(26, 31, 58, 0.9)), 
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%231a1f3a" width="1200" height="600"/><circle cx="200" cy="200" r="150" fill="%232d3561" opacity="0.3"/><circle cx="900" cy="400" r="200" fill="%23ef4444" opacity="0.1"/></svg>');
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 50%, rgba(239, 68, 68, 0.1) 0%, transparent 50%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            padding: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #3b82f6 0%, #ef4444 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInDown 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease 0.3s backwards;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 3rem;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3);
+            animation: fadeInUp 1s ease 0.6s backwards;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(239, 68, 68, 0.5);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section {
+            padding: 5rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #3b82f6 0%, #ef4444 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .product-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .product-card h3 {
+            color: #ef4444;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-specs {
+            margin: 1.5rem 0;
+        }
+
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .spec-label {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .spec-value {
+            font-weight: bold;
+            color: #3b82f6;
+        }
+
+        .flow-container {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 30px;
+            padding: 3rem;
+            margin: 3rem 0;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .flow-step {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(239, 68, 68, 0.1) 100%);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            border-left: 5px solid #ef4444;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .flow-step:hover {
+            transform: translateX(10px);
+            box-shadow: -10px 10px 30px rgba(239, 68, 68, 0.2);
+        }
+
+        .flow-step::before {
+            content: '';
+            position: absolute;
+            left: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            background: #ef4444;
+            border-radius: 50%;
+            border: 5px solid #1a1f3a;
+        }
+
+        .flow-step h3 {
+            color: #ef4444;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .flow-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #3b82f6 0%, #ef4444 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .flow-step p {
+            line-height: 1.8;
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(239, 68, 68, 0.1) 100%);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+        }
+
+        .info-card h4 {
+            color: #3b82f6;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-card p {
+            color: rgba(255,255,255,0.8);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1f3a 0%, #2d3561 100%);
+            padding: 3rem;
+            border-radius: 30px;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.2);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-modal:hover {
+            background: #ef4444;
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            40% {
+                transform: translateX(-50%) translateY(-20px);
+            }
+            60% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+        }
+
+        .scroll-indicator::after {
+            content: '↓';
+            font-size: 2rem;
+            color: #ef4444;
+        }
+
+        footer {
+            background: rgba(26, 31, 58, 0.95);
+            padding: 2rem 5%;
+            text-align: center;
+            border-top: 2px solid rgba(239, 68, 68, 0.3);
+        }
+
+        footer p {
+            color: rgba(255,255,255,0.7);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.2rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <span class="logo-g">G</span><span class="logo-t">T</span><span class="logo-rest"> RADIAL</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#products">Products</a></li>
+            <li><a href="#flow">Flow Process</a></li>
+            <li><a href="#department">Department</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>WAREHOUSE PCR2</h1>
+            <p>Flow Proses Gudang - Plant D & K (DPW)</p>
+            <a href="#flow" class="cta-button">Explore Flow Process</a>
+        </div>
+        <div class="scroll-indicator"></div>
+    </section>
+
+    <section class="section" id="products">
+        <h2 class="section-title">Produk GT Radial</h2>
+        <div class="products-grid">
+            <div class="product-card" onclick="openModal('champiro-eco')">
+                <h3>🐘 Champiro ECO</h3>
+                <div class="product-specs">
+                    <div class="spec-item">
+                        <span class="spec-label">Rim Sizes</span>
+                        <span class="spec-value">12-16</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Aspect Ratio</span>
+                        <span class="spec-value">60-80</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Section Width</span>
+                        <span class="spec-value">135-215</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Speed Rating</span>
+                        <span class="spec-value">S-V</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Traction</span>
+                        <span class="spec-value">300 A A</span>
+                    </div>
+                </div>
+                <p>Memberikan stabilitas dan keamanan yang sangat baik sekaligus mencegah aquaplaning. Cengkeraman yang sangat baik di jalan basah dan kering serta mempertahankan kemampuan pengendalian dan pengereman pada level tertinggi.</p>
+            </div>
+
+            <div class="product-card" onclick="openModal('champiro-hpy')">
+                <h3>🐘 Champiro HPY</h3>
+                <div class="product-specs">
+                    <div class="spec-item">
+                        <span class="spec-label">Rim Sizes</span>
+                        <span class="spec-value">17-20</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Aspect Ratio</span>
+                        <span class="spec-value">40-65</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Section Width</span>
+                        <span class="spec-value">215-275</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Speed Rating</span>
+                        <span class="spec-value">V-Y</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Traction</span>
+                        <span class="spec-value">300 A A</span>
+                    </div>
+                </div>
+                <p><strong>LUAR:</strong> Tapak bahu lebar yang kompak untuk jalan yang optimal dan stabilitas menikung yang sangat baik.<br>
+                <strong>DALAM:</strong> Alur melintang terbuka dikombinasikan dengan 2 alur lebar lurus untuk dispersi air yang optimal dan pencegahan aquaplaning.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="department">
+        <h2 class="section-title">Profil Departemen</h2>
+        <div class="flow-container">
+            <h3 style="color: #3b82f6; font-size: 2rem; margin-bottom: 2rem;">WAREHOUSE - PLANT D DAN K (DPW)</h3>
+            <p style="line-height: 1.8; margin-bottom: 2rem; font-size: 1.1rem;">
+                Warehouse adalah Departemen yang merupakan bagian penting dalam operasional perusahaan yang berperan dalam mengelola penerimaan, penyimpanan, dan pengeluaran barang guna mendukung kelancaran proses produksi dan distribusi. Departemen ini bertanggung jawab memastikan seluruh barang tersimpan dengan aman, tertata rapi, dan tercatat secara akurat sesuai dengan prosedur yang berlaku.
+            </p>
+            
+            <div class="info-grid">
+                <div class="info-card">
+                    <h4>Supplier</h4>
+                    <p>Plant D & K</p>
+                </div>
+                <div class="info-card">
+                    <h4>Input</h4>
+                    <p>Tire</p>
+                </div>
+                <div class="info-card">
+                    <h4>Process</h4>
+                    <p>Penerimaan, Stock Control, Staging, Loading</p>
+                </div>
+                <div class="info-card">
+                    <h4>Customer</h4>
+                    <p>FG Warehouse</p>
+                </div>
+            </div>
+
+            <div style="background: rgba(59, 130, 246, 0.1); padding: 2rem; border-radius: 15px; margin-top: 2rem;">
+                <h4 style="color: #3b82f6; margin-bottom: 1rem; font-size: 1.5rem;">Output</h4>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.1);">✓ Tire OEM</li>
+                    <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.1);">✓ Tire Replacement</li>
+                    <li style="padding: 0.5rem 0;">✓ Tire Wrapping</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="flow">
+        <h2 class="section-title">Flow Process Gudang PCR2</h2>
+        
+        <div class="flow-container">
+            <div class="flow-step" onclick="openModal('plant')">
+                <h3><span class="flow-icon">🏭</span>Plant D & K</h3>
+                <p>Plant D&K berperan sebagai pemasok utama bagi departemen warehouse dalam menyediakan produk berupa tire. Seluruh ban yang dihasilkan merupakan hasil dari proses produksi di Plant D&K yang telah melalui tahapan pemeriksaan kualitas dilakukan oleh FI (Final Inspection) sebelum diserahkan ke petugas penerimaan gudang.</p>
+            </div>
+
+            <div class="flow-step" onclick="openModal('tire')">
+                <h3><span class="flow-icon">⚙️</span>Tire (Input)</h3>
+                <p>Tire merupakan salah satu produk utama yang disimpan dan dikelola di area gudang sebagai bagian dari persediaan perusahaan. Produk ini berasal dari hasil proses produksi yang telah melalui tahapan pemeriksaan kualitas dan selanjutnya ditempatkan di gudang untuk diatur, ditata, serta dicatat sesuai dengan sistem pergudangan yang berlaku.</p>
+            </div>
+
+            <div class="flow-step" onclick="openModal('penerimaan')">
+                <h3><span class="flow-icon">📥</span>Penerimaan</h3>
+                <p>Penerimaan merupakan tahapan awal dalam kegiatan pergudangan yang berfungsi untuk menerima tire hasil produksi yang telah dinyatakan memenuhi standar kualitas oleh FI (Final Inspection). Proses ini bertujuan untuk memastikan kesesuaian antara barang yang diterima dengan dokumen BSTB, baik dari segi jumlah, jenis, maupun kondisi fisik tire.</p>
+                <p style="margin-top: 1rem;">Pada tahap penerimaan dilakukan pemindaian barcode sebagai bagian dari sistem informasi pergudangan guna mencatat data barang dan menentukan lokasi penyimpanan yang sesuai.</p>
+            </div>
+
+            <div class="flow-step" onclick="openModal('transfer')">
+                <h3><span class="flow-icon">🔄</span>Transfer</h3>
+                <p>Transfer merupakan kegiatan pemindahan ban yang dilakukan apabila pada saat proses pemindaian barcode di area penerimaan, baik di PCR 1 maupun di PCR 2, sistem menunjukkan bahwa lokasi penyimpanan tire berada di area yang berbeda dari lokasi penerimaan awal.</p>
+                <p style="margin-top: 1rem;">Proses transfer ini bertujuan untuk memastikan kesesuaian penempatan ban dengan informasi dalam sistem, menjaga keteraturan dan kerapihan tata letak gudang, serta mendukung keakuratan pengendalian persediaan.</p>
+            </div>
+
+            <div class="flow-step" onclick="openModal('stock')">
+                <h3><span class="flow-icon">📊</span>Stock Control</h3>
+                <p>Stock control merupakan salah satu fungsi utama dalam aktivitas pergudangan yang memiliki peran penting dalam menjaga kestabilan persediaan serta menjamin kesesuaian antara jumlah stok fisik dan data yang tercatat dalam sistem.</p>
+                <p style="margin-top: 1rem;">Melalui kegiatan pengawasan dan pengendalian yang dilakukan secara berkala, stock control memastikan bahwa alur keluar masuk barang berjalan sesuai dengan metode <strong>First In First Out (FIFO)</strong>, sehingga rotasi persediaan dapat terjaga dengan baik.</p>
+            </div>
+
+            <div class="flow-step" onclick="openModal('staging')">
+                <h3><span class="flow-icon">📦</span>Staging</h3>
+                <p>Staging merupakan proses persiapan pengiriman yang dilakukan sebelum kegiatan pemuatan barang ke sarana angkut. Tahapan ini diawali dengan pengecekan RMB serta pemeriksaan kesesuaian barang berdasarkan penerapan metode First In First Out (FIFO) guna memastikan ketepatan jenis dan urutan pengiriman.</p>
+                <p style="margin-top: 1rem;">Selanjutnya, ban ditempatkan di area staging sebagai area persiapan agar proses loading ke dalam kontainer dapat dilakukan secara lebih tertib, efisien, dan memudahkan petugas dalam pelaksanaan pemuatan barang.</p>
+            </div>
+
+            <div class="flow-step" onclick="openModal('loading')">
+                <h3><span class="flow-icon">🚚</span>Loading</h3>
+                <p>Loading merupakan proses pemuatan barang ke dalam kontainer sebagai bagian dari kegiatan pengiriman. Pada Plant D, proses pemuatan tire telah didukung oleh penggunaan sistem conveyor yang berfungsi untuk mempermudah dan mempercepat kegiatan muat barang.</p>
+                <p style="margin-top: 1rem;">Di dalam sistem conveyor tersebut terdapat mekanisme pengendalian yang berfungsi untuk mendeteksi kondisi tire selama proses pemuatan. Apabila teridentifikasi adanya tire yang bermasalah, sistem conveyor akan memberikan tanda peringatan berupa suara dan secara otomatis memisahkan tire tersebut dari alur pemuatan.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">×</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 GT Radial - Warehouse PCR2 Flow Process | Kelompok 5 Logistik</p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem;">Plant D & K - Production Warehouse Department</p>
+    </footer>
+
+    <script>
+        const modalContents = {
+            'plant': {
+                title: '🏭 Plant D & K',
+                content: `
+                    <h2 style="color: #3b82f6; margin-bottom: 1.5rem;">Plant D & K - Supplier Utama</h2>
+                    <p style="line-height: 1.8; margin-bottom: 1rem;">
+                        Plant D&K berperan sebagai <strong>pemasok utama</strong> bagi departemen warehouse dalam menyediakan produk berupa tire. Seluruh ban yang dihasilkan merupakan hasil dari proses produksi di Plant D&K yang telah melalui tahapan pemeriksaan kualitas dilakukan oleh <strong>FI (Final Inspection)</strong> sebelum diserahkan ke petugas penerimaan gudang.
+                    </p>
+                    <p style="line-height: 1.8;">
+                        Selanjutnya, produk tersebut dikelola, disimpan, dan disiapkan oleh departemen warehouse sesuai dengan sistem dan prosedur yang berlaku guna mendukung kelancaran kegiatan distribusi dan penjualan kepada pelanggan, baik untuk memenuhi kebutuhan pasar domestik maupun permintaan pasar ekspor.
+                    </p>
+                `
+            },
+            'tire': {
+                title: '⚙️ Tire (Input)',
+                content: `
+                    <h2 style="color: #3b82f6; margin-bottom: 1.5rem;">Tire - Produk Utama</h2>
+                    <p style="line-height: 1.8;">
+                        Tire merupakan salah satu <strong>produk utama</strong> yang disimpan dan dikelola di area gudang sebagai bagian dari persediaan perusahaan. Produk ini berasal dari hasil proses produksi yang telah melalui tahapan pemeriksaan kualitas dan selanjutnya ditempatkan di gudang untuk diatur, ditata, serta dicatat sesuai dengan sistem pergudangan yang berlaku.
+                    </p>
+                `
+            },
+            'penerimaan': {
+                title: '📥 Penerimaan',
+                content: `
+                    <h2 style="color: #3b82f6; margin-bottom: 1.5rem;">Penerimaan - Tahapan Awal</h2>
+                    <p style="line-height: 1.8; margin-bottom: 1rem;">
+                        Penerimaan merupakan <strong>tahapan awal</strong> dalam kegiatan pergudangan yang berfungsi untuk menerima tire hasil produksi yang telah dinyatakan memenuhi standar kualitas oleh FI (Final Inspection).
+                    </p>
+                    <div style="background: rgba(59, 130, 246, 0.1); padding: 1.5rem; border-radius: 10px; margin: 1.5rem 0;">
+                        <h3 style="color: #ef4444; margin-bottom: 1rem;">Tujuan Penerimaan:</h3>
+                        <ul style="line-height: 2;">
+                            <li>✓ Memastikan kesesuaian dengan dokumen BSTB</li>
+                            <li>✓ Verifikasi jumlah, jenis, dan kondisi fisik tire</li>
+                            <li>✓ Pemindaian barcode untuk pencatatan sistem</li>
+                            <li>✓ Menentukan lokasi penyimpanan yang sesuai</li>
+                        </ul>
+                    </div>
+                    <p style="line-height: 1.8;">
+                        Selain itu, pada tahap penerimaan dilakukan pemindaian barcode sebagai bagian dari sistem informasi pergudangan guna mencatat data barang dan menentukan lokasi penyimpanan yang sesuai, sehingga proses penataan dan pengendalian persediaan dapat berjalan secara tertib dan terstruktur.
+                    </p>
+                `
+            },
+            'transfer': {
+                title: '🔄 Transfer',
+                content: `
+                    <h2 style="color: #3b82f6; margin-bottom: 1.5rem;">Transfer - Pemindahan Tire</h2>
+                    <p style="line-height: 1.8; margin-bottom: 1rem;">
+                        Transfer merupakan kegiatan pemindahan ban yang dilakukan apabila pada saat proses pemindaian barcode di area penerimaan, baik di <strong>PCR 1</strong> maupun di <strong>PCR 2</strong>, sistem menunjukkan bahwa lokasi penyimpanan tire berada di area yang berbeda dari lokasi penerimaan awal.
+                    </p>
+                    <div style="background: rgba(239, 68, 68, 0.1); padding: 1.5rem; border-radius: 10px; margin: 1.5rem 0;">
+                        <h3 style="color: #ef4444; margin-bottom: 1rem;">Tujuan Transfer:</h3>
+                        <ul style="line-height: 2;">
+                            <li>✓ Memastikan kesesuaian penempatan dengan sistem barcode</li>
+                            <li>✓ Menjaga keteraturan dan kerapihan tata letak gudang</li>
+                            <li>✓ Mendukung keakuratan pengendalian persediaan</li>
+                            <li>✓ Kelancaran seluruh aktivitas pergudangan</li>
+                        </ul>
+                    </div>
+                    <p style="line-height: 1.8;">
+                        Dalam kondisi tersebut, tire dipindahkan dari area penerimaan ke lokasi penyimpanan yang telah ditetapkan oleh sistem barcode sesuai dengan data yang tercatat.
+                    </p>
+                `
+            },
+            'stock': {
+                title: '📊 Stock Control',
+                content: `
+                    <h2 style="color: #3b82f6; margin-bottom: 1.5rem;">Stock Control - Pengendalian Persediaan</h2>
+                    <p style="line-height: 1.8; margin-bottom: 1rem;">
+                        Stock control merupakan salah satu <strong>fungsi utama</strong> dalam aktivitas pergudangan yang memiliki peran penting dalam menjaga kestabilan persediaan serta menjamin kesesuaian antara jumlah stok fisik dan data yang tercatat dalam sistem.
+                    </p>
+                    <div style="background: rgba(59, 130, 246, 0.1); padding: 1.5rem; border-radius: 10px; margin: 1.5rem 0;">
+                        <h3 style="color: #3b82f6; margin-bottom: 1rem;">Metode FIFO (First In First Out)</h3>
+                        <p style="line-height: 1.8;">
+                            Melalui kegiatan pengawasan dan pengendalian yang dilakukan secara berkala, stock control memastikan bahwa alur keluar masuk barang berjalan sesuai dengan metode <strong>First In First Out (FIFO)</strong>, sehingga rotasi persediaan dapat terjaga dengan baik dan risiko terjadinya penumpukan stok lama maupun kesalahan pengiriman dapat diminimalkan.
+                        </p>
+                    </div>
+                `
+            },
+            'staging': {
+                title: '📦 Staging',
+                content: `
+                    <h2 style="color: #3b82f6; margin-bottom: 1.5rem;">Staging - Persiapan Pengiriman</h2>
+                    <p style="line-height: 1.8; margin-bottom: 1rem;">
+                        Staging merupakan proses persiapan pengiriman yang dilakukan sebelum kegiatan pemuatan barang ke sarana angkut.
+                    </p>
+                    <div style="background: rgba(59, 130, 246, 0.1); padding: 1.5rem; border-radius: 10px; margin: 1.5rem 0;">
+                        <h3 style="color: #ef4444; margin-bottom: 1rem;">Tahapan Staging:</h3>
+                        <ul style="line-height: 2;">
+                            <li>✓ Pengecekan RMB (Request Material/Barang)</li>
+                            <li>✓ Pemeriksaan kesesuaian barang dengan FIFO</li>
+                            <li>✓ Memastikan ketepatan jenis dan urutan pengiriman</li>
+                            <li>✓ Penempatan di area staging untuk persiapan loading</li>
+                        </ul>
+                    </div>
+                    <p style="line-height: 1.8;">
+                        Selanjutnya, ban ditempatkan di area staging sebagai area persiapan agar proses loading ke dalam kontainer dapat dilakukan secara lebih <strong>tertib</strong>, <strong>efisien</strong>, dan memudahkan petugas dalam pelaksanaan pemuatan barang.
+                    </p>
+                `
+            },
+            'loading': {
+                title: '🚚 Loading',
+                content: `
+                    <h2 style="color: #3b82f6; margin-bottom: 1.5rem;">Loading - Pemuatan Barang</h2>
+                    <p style="line-height: 1.8; margin-bottom: 1rem;">
+                        Loading merupakan proses pemuatan barang ke dalam kontainer sebagai bagian dari kegiatan pengiriman. Pada Plant D, proses pemuatan tire telah didukung oleh penggunaan <strong>sistem conveyor</strong> yang berfungsi untuk mempermudah dan mempercepat kegiatan muat barang.
+                    </p>
+                    <div style="background: rgba(239, 68, 68, 0.1); padding: 1.5rem; border-radius: 10px; margin: 1.5rem 0;">
+                        <h3 style="color: #ef4444; margin-bottom: 1rem;">Sistem Conveyor & Quality Control:</h3>
+                        <ul style="line-height: 2;">
+                            <li>✓ Mempermudah dan mempercepat proses pemuatan</li>
+                            <li>✓ Mekanisme pengendalian otomatis untuk deteksi masalah</li>
+                            <li>✓ Tanda peringatan suara untuk tire bermasalah</li>
+                            <li>✓ Pemisahan otomatis tire yang teridentifikasi bermasalah</li>
+                            <li>✓ Penempatan tire bermasalah di rak merah khusus</li>
+                        </ul>
+                    </div>
+                    <p style="line-height: 1.8;">
+                        Di dalam sistem conveyor tersebut terdapat mekanisme pengendalian yang berfungsi untuk mendeteksi kondisi tire selama proses pemuatan. Apabila teridentifikasi adanya tire yang bermasalah, sistem conveyor akan memberikan tanda peringatan berupa suara dan secara otomatis memisahkan tire tersebut dari alur pemuatan. Selanjutnya, tire yang terindikasi bermasalah akan dipindahkan oleh petugas ke <strong>rak merah</strong> sebagai area khusus penanganan, sehingga hanya ban yang memenuhi standar yang dimuat ke dalam kontainer.
+                    </p>
+                `
+            },
+            'champiro-eco': {
+                title: '🐘 Champiro ECO',
+                content: `
+                    <h2 style="color: #3b82f6; margin-bottom: 1.5rem;">Champiro ECO</h2>
+                    <div style="background: rgba(59, 130, 246, 0.1); padding: 1.5rem; border-radius: 10px; margin: 1.5rem 0;">
+                        <h3 style="color: #ef4444; margin-bottom: 1rem;">Spesifikasi:</h3>
+                        <ul style="line-height: 2;">
+                            <li><strong>Rim Sizes:</strong> 12-16</li>
+                            <li><strong>Aspect Ratio:</strong> 60-80</li>
+                            <li><strong>Section Width:</strong> 135-215</li>
+                            <li><strong>Speed Rating:</strong> S-V</li>
+                            <li><strong>Traction:</strong> 300 A A</li>
+                        </ul>
+                    </div>
+                    <p style="line-height: 1.8;">
+                        Memberikan <strong>stabilitas dan keamanan</strong> yang sangat baik sekaligus mencegah aquaplaning. Cengkeraman yang sangat baik di jalan basah dan kering serta mempertahankan kemampuan pengendalian dan pengereman pada level tertinggi.
+                    </p>
+                `
+            },
+            'champiro-hpy': {
+                title: '🐘 Champiro HPY',
+                content: `
+                    <h2 style="color: #3b82f6; margin-bottom: 1.5rem;">Champiro HPY</h2>
+                    <div style="background: rgba(59, 130, 246, 0.1); padding: 1.5rem; border-radius: 10px; margin: 1.5rem 0;">
+                        <h3 style="color: #ef4444; margin-bottom: 1rem;">Spesifikasi:</h3>
+                        <ul style="line-height: 2;">
+                            <li><strong>Rim Sizes:</strong> 17-20</li>
+                            <li><strong>Aspect Ratio:</strong> 40-65</li>
+                            <li><strong>Section Width:</strong> 215-275</li>
+                            <li><strong>Speed Rating:</strong> V-Y</li>
+                            <li><strong>Traction:</strong> 300 A A</li>
+                        </ul>
+                    </div>
+                    <div style="background: rgba(239, 68, 68, 0.1); padding: 1.5rem; border-radius: 10px; margin: 1.5rem 0;">
+                        <h3 style="color: #3b82f6; margin-bottom: 1rem;">Keunggulan:</h3>
+                        <p style="line-height: 1.8; margin-bottom: 1rem;">
+                            <strong>LUAR:</strong> Tapak bahu lebar yang kompak untuk jalan yang optimal dan stabilitas menikung yang sangat baik.
+                        </p>
+                        <p style="line-height: 1.8;">
+                            <strong>DALAM:</strong> Alur melintang terbuka dikombinasikan dengan 2 alur lebar lurus untuk dispersi air yang optimal dan pencegahan aquaplaning.
+                        </p>
+                    </div>
+                `
+            }
+        };
+
+        function openModal(contentId) {
+            const modal = document.getElementById('modal');
+            const modalBody = document.getElementById('modal-body');
+            
+            if (modalContents[contentId]) {
+                modalBody.innerHTML = modalContents[contentId].content;
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll animation to flow steps
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.flow-step').forEach(step => {
+            observer.observe(step);
+        });
+    </script>
+</body>
+</html>
